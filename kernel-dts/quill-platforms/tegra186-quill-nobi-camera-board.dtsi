@@ -1,0 +1,103 @@
+/* Device tree for Nobi Camera board support
+* TODO: seperate "module" specific node configuration from "platform" specific
+* configuration. Right noz everything is in module.
+*/
+
+#include <quill-modules/tegra186-camera-ar0330.dtsi>
+
+/ {
+	i2c@3180000 {
+		/*
+		* Set up I/O expander
+		* Assumes default configuration of R41 and R42
+		*/
+		gpio_i2c_cam_74: gpio@74 {
+			compatible = "ti,tca9539";
+			reg = <0x74>;
+			gpio-controller;
+			#gpio-cells = <2>;
+			vcc-supply = <&battery_reg>; /* TODO: properly define or remove this. */
+
+			ar-0330-osc-gpios {
+				gpio-hog;
+				gpios = <6 0>; /* P06 active high */
+				output-high; /* ToDo: control this more elegantly */
+				label = "enable-ar0330-osc";
+			};
+			/* TODO: define this here to make module pin independent
+			mic-gpios {
+				gpio-hog;
+				gpios = <0 0>;
+				output-low;
+				label = "mic-select";
+			};
+
+			ar-0330-gpios {
+				gpio-hog;
+				gpios = <6 0 7 0>;
+				output-low;
+				label = "enable-ar0330-osc", "reset-ar0330;
+			};
+
+			flir-gpios {
+				gpio-hog;
+				gpios = <11 1
+				         12 0
+				         13 1
+				         14 1
+				         15 0>;
+				output-low;
+				label = "reset-flir",
+				        "enable-flir-osc,
+				        "power-down-flir",
+				        "enable-flir-gpio-voltage-translator",
+				        "enable-flir-i2c-voltage-translator";
+			}
+
+			led-gpios {
+				gpio-hog;
+				gpios = <16, 0, 17, 0>
+				output-low;
+				label = "enable-led-low", "enable-led-high";
+			}
+			*/
+		};
+	};
+
+	/* Fixed regulators on camera board. No GPIO enable pin available, but can be used to ensure proper timing and compatibility with AR0330 driver */
+	vdd_cam_1v2_reg: fixedregulator@cam_1 {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_cam_1v2_reg";
+		regulator-min-microvolt = <1200000>;
+		regulator-max-microvolt = <1200000>;
+		startup-delay-us = <3720>; /* 8192 cycles @2.2MHz = 3.72ms */
+		vin-supply = <&spmic_sd3>;
+	};
+
+	vdd_cam_2v8_reg: fixedregulator@cam_2 {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_cam_2v8_reg";
+		regulator-min-microvolt = <2800000>;
+		regulator-max-microvolt = <2800000>;
+		startup-delay-us = <3720>; /* 8192 cycles @2.2MHz = 3.72ms */
+		vin-supply = <&vdd_cam_1v2_reg>;
+	};
+
+	vdd_cam_1v8_reg: fixedregulator@cam_3 {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_cam_1v8_reg";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		startup-delay-us = <3720>; /* 8192 cycles @2.2MHz = 3.72ms */
+		vin-supply = <&vdd_cam_2v8_reg>;
+	};
+
+	vdd_cam_3v0_reg: fixedregulator@cam_4 {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_cam_3v0_reg";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		startup-delay-us = <3720>; /* 8192 cycles @2.2MHz = 3.72ms */
+		vin-supply = <&vdd_cam_1v8_reg>;
+	};
+};
