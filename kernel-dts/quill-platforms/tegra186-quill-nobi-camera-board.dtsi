@@ -1,6 +1,6 @@
 /* Device tree for Nobi Camera board support
-* TODO: seperate "module" specific node configuration from "platform" specific
-* configuration. Right noz everything is in module.
+*
+* TODO: seperate "module" specific node configuration from "platform" specific configuration.
 */
 
 #include <quill-modules/tegra186-camera-ar0330.dtsi>

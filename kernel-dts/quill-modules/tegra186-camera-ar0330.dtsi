@@ -1,10 +1,14 @@
 /* Device tree for AR0330 camera support
 *
-* This 
+* This configures all drivers for the Nobi camera bord connected to the Jetson
+* TX2 dev-kit with the interposer board.
 *
-* Based on https://devtalk.nvidia.com/default/topic/1048530/jetson-tx2/two-csi-cameras-each-work-individually-but-not-at-the-same-time/
+* TODO: make this entry platform agnostic by moving settings in platform entry.
 *
-* Original DTS for the Tegra TK1: https://github.com/madisongh/linux-tegra/blob/ef19d27ca4d97fe8b4f81dc994e3e4d633b13d0c/arch/arm/boot/dts/tegra124-platforms/tegra124-pm359-camera-a00.dtsi#L181
+* Based on:
+* - https://devtalk.nvidia.com/default/topic/1048530/jetson-tx2/two-csi-cameras-each-work-individually-but-not-at-the-same-time/
+* - the imx274 device tree entry.
+* - the original DTS for the Tegra TK1: https://github.com/madisongh/linux-tegra/blob/ef19d27ca4d97fe8b4f81dc994e3e4d633b13d0c/arch/arm/boot/dts/tegra124-platforms/tegra124-pm359-camera-a00.dtsi#L181
 */
 
 #include <dt-bindings/media/camera.h>
@@ -14,7 +18,7 @@
 
 / {
 	host1x { /* The Tegra host1x module is the DMA engine for register access to Tegra’s graphics- and multimedia-related modules. */
-		vi@15700000 { /* The Video Input unit. See Parker TRM cahpter 27 (page 2773) */
+		vi@15700000 { /* The Video Input unit. See Parker TRM chapter 27 (page 2773) */
 			num-channels= <1>;
 			ports {
 				#address-cells = <1>;
