@@ -14,7 +14,7 @@
 #include <dt-bindings/media/camera.h>
 #include "dt-bindings/clock/tegra186-clock.h"
 
-/* AR0330 csi_in0, csi_out0 -> csi_in0, csi_out0 NVCSI ar0330_vi_in0 -> ar0330_vi_in0 VI DMA */
+/* AR0330 ar0330_csi_in0, ar0330_csi_out0 -> ar0330_vi_in0, csi_out0 NVCSI cam_vi_in0 -> cam_vi_in0 VI DMA */
 
 / {
 	host1x { /* The Tegra host1x module is the DMA engine for register access to Tegra’s graphics- and multimedia-related modules. */
@@ -26,9 +26,9 @@
 				port@0 {
 					reg = <0>;
 					ar0330_vi_in0: endpoint {
-						csi-port = <0>; /* CSI port A */
+						csi-port = <0>;
 						bus-width = <2>;
-						remote-endpoint = <&cam_csi_out0>;
+						remote-endpoint = <&ar0330_csi_out0>;
 					};
 				};
 			};
@@ -43,15 +43,15 @@
 					#size-cells = <0>;
 					port@0 {
 						reg = <0>;
-						csi_in0: endpoint@0 { /* D0 */
-							csi-port = <0>; /* CSI port A */
+						ar0330_csi_in0: endpoint@0 {
+							csi-port = <0>;
 							bus-width = <2>;
 							remote-endpoint = <&ar0330_out0>;
 						};
 					};
 					port@1 {
 						reg = <1>;
-						cam_csi_out0: endpoint@1 {
+						ar0330_csi_out0: endpoint@1 {
 							remote-endpoint = <&ar0330_vi_in0>;
 						};
 					};
@@ -72,16 +72,23 @@
 			status = "okay";
 			compatible = "nvidia,ar0330";
 			reg = <0x10>;
+			devnode = "video0";
 			sensor_model ="ar0330";
 			avdd-reg = "vana";
 			iovdd-reg = "vif";
 
 			post_crop_frame_drop = "0";
+			/*
 			clocks = <&tegra_car TEGRA186_CLK_EXTPERIPH1>,
-				   <&tegra_car TEGRA186_CLK_PLLP_OUT0>;
+					 <&tegra_car TEGRA186_CLK_PLLP_OUT0>;
 			clock-names = "extperiph1", "pllp_grtba";
 			mclk = "extperiph1";
+			*/
+			clocks = <&tegra_car TEGRA186_CLK_EXTPERIPH2>,
+					 <&tegra_car TEGRA186_CLK_PLLP_OUT0>;
+			clock-names = "extperiph2", "pllp_grtba";
 			clock-frequency = <24000000>;
+			mclk = "extperiph2";
 
 			/* Reset pin. Seems to be named cam1-gpios in driver */
 			cam1-gpios = <&gpio_i2c_cam_74 6 0>;
@@ -202,9 +209,9 @@
 				port@0 {
 					reg = <0>;
 					ar0330_out0: endpoint {
-						csi-port = <1>; /* CSI port A */
+						csi-port = <0>; /* CSI port A */
 						bus-width = <2>;
-						remote-endpoint = <&csi_in0>;
+						remote-endpoint = <&ar0330_csi_in0>;
 					};
 				};
 			};
@@ -213,6 +220,18 @@
 
 	tegra-camera-platform {
 		compatible = "nvidia, tegra-camera-platform";
+
+		num_csi_lanes = <2>;
+
+		/* TODO: double check these values */
+		max_lane_speed = <1500000>;
+		min_bits_per_pixel = <10>;
+		vi_peak_byte_per_pixel = <2>;
+		vi_bw_margin_pct = <25>;
+		max_pixel_rate = <750000>;
+		isp_peak_byte_per_pixel = <2>;
+		isp_bw_margin_pct = <25>;
+
 		modules {
 			module1 {
 				badge = "cam_test";
