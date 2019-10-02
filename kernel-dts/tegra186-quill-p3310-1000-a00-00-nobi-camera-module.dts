@@ -39,13 +39,13 @@
 				ports {
 					csi_chan0_port0: port@0 {
 						status = "okay";
-						csi_in0: endpoint@0 {
+						ar0330_csi_in0: endpoint@0 {
 							status = "okay";
 						};
 					};
 					csi_chan0_port1: port@1 {
 						status = "okay";
-						cam_csi_out0: endpoint@1 {
+						ar0330_csi_out0: endpoint@1 {
 							status = "okay";
 						};
 					};
